@@ -24,7 +24,7 @@ project "sandstone"
 	links 
 	{
 		"SDL2",
-		"SDL2main",
+		"SDL2main"
 	}
 
 	postbuildcommands {

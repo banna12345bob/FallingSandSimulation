@@ -5,7 +5,6 @@
 namespace Sandstone {
 	ConsoleApplication::ConsoleApplication()
 	{
-		SS_INFO("Running");
 	}
 
 	ConsoleApplication::~ConsoleApplication()
@@ -13,6 +12,9 @@ namespace Sandstone {
 
 	void ConsoleApplication::Run()
 	{
+		while (running) {
+			SS_CORE_INFO("Running");
+		}
 	}
 
 }

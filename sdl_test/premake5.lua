@@ -18,7 +18,8 @@ project "sdl_test"
 		"%{wks.location}/sandstone/vendor/spdlog/include",
 		"%{wks.location}/sandstone/vendor/json/include",
 		"%{wks.location}/sandstone/src",
-		"%{wks.location}/sandstone/vendor"
+		"%{wks.location}/sandstone/vendor",
+		"%{IncludeDir.sdl2}"
 	}
 
 	links

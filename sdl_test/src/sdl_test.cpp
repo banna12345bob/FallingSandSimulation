@@ -1,13 +1,11 @@
 #include <sandstone.h>
 
-class sdl_test : public Sandstone::ConsoleApplication
+class sdl_test : public Sandstone::SDLApplication
 {
 public:
 	sdl_test()
 	{
-		while (true)
-		{
-		}
+		
 	}
 	~sdl_test()
 	{

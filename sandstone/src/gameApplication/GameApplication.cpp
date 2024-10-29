@@ -65,7 +65,7 @@ namespace Sandstone {
 	{
 		std::string inp;
 
-		while (true) {
+		while (running) {
 			std::string arr[100];
 			int arr_length = 0;
 			std::cout << "Command: ";

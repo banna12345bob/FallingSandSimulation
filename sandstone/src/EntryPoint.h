@@ -15,6 +15,7 @@ extern Sandstone::Application* Sandstone::CreateApplication();
 		auto app = Sandstone::CreateApplication();
 		app->Run();
 		delete app;
+		return 0;
 	}
 #else
     #error "Entry point not built for current OS!"
