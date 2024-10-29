@@ -17,7 +17,6 @@ namespace Sandstone {
 
 		virtual void Run() override;
 
-	private:
 		SDL_Window* window = NULL;
 
 		//The surface contained by the window
