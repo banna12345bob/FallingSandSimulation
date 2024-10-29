@@ -1,0 +1,33 @@
+#pragma once
+
+#include "core.h"
+#include <string>
+#include <sstream>
+#include <map>
+#include "commands.h"
+#include "Application.h"
+
+namespace Sandstone {
+
+	class GameApplication : public Application
+	{
+	public:
+        GameApplication(std::string roomFile, std::string objectFile, std::string saveFile = "save.json", std::string player = "Player1");
+		virtual ~GameApplication();
+
+		virtual void Run() override;
+		std::map<std::string, command*> m_Commands;
+	private:
+		std::string m_RoomFile;
+		std::string m_baseRoomFile;
+		std::string m_ObjectFile;
+		std::string m_SaveFile;
+		std::string m_Player;
+		room* m_roomPtr;
+		objects* m_objectsPtr;
+		inventory* m_invPtr;
+	};
+
+	//	To be defined in client
+    Application* CreateApplication();
+}
