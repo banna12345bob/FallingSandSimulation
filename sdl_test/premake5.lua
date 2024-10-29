@@ -26,6 +26,10 @@ project "sdl_test"
 	{
 		"sandstone"
 	}
+
+	postbuildcommands {
+		"{COPY} %{IncludeDir.sdl2}/../Binaries/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}/SDL2* %{cfg.targetdir}"
+	}
 	
 	filter "system:windows"
 	systemversion "latest"
