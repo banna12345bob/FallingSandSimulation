@@ -1,9 +1,3 @@
-[submodule "sandstone/vendor/spdlog"]
-	path = sandstone/vendor/spdlog
-	url = https://github.com/gabime/spdlog
-[submodule "sandstone/vendor/json"]
-	path = sandstone/vendor/json
-	url = https://github.com/nlohmann/json
 [submodule "sandstone/vendor/SDL2"]
 	path = sandstone/vendor/SDL2
 	url = https://github.com/banna12345bob/SDL
