@@ -5,8 +5,8 @@
 namespace Sandstone {
 	SDLApplication::SDLApplication()
 	{
-		const int SCREEN_WIDTH = 255;
-		const int SCREEN_HEIGHT = 255;
+		const int SCREEN_WIDTH = 540;
+		const int SCREEN_HEIGHT = 540;
 		
 		//Initialize SDL
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)

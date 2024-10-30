@@ -1,4 +1,4 @@
-project "sdl_test"
+project "fallingSand"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"

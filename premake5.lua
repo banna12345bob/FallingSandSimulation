@@ -1,5 +1,5 @@
-workspace "sdl_test"
-	startproject "sdl_test"
+workspace "fallingSand"
+	startproject "fallingSand"
 
 	configurations
 	{
@@ -22,4 +22,4 @@ group "Dependencies"
 
 group ""
 	include "sandstone"
-	include "sdl_test"
+	include "fallingSand"
