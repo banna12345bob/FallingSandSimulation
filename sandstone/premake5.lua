@@ -16,12 +16,14 @@ project "sandstone"
 	includedirs
 	{
 		"src",
-		"vendor/spdlog/include",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.imgui}",
 		"%{IncludeDir.sdl2}"
 	}
 
 	links 
 	{
+		"imgui",
 		"SDL2",
 		"SDL2main"
 	}

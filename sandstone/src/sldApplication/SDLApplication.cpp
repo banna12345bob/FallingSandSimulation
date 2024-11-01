@@ -21,6 +21,8 @@ namespace Sandstone {
 				SS_CORE_ASSERT(false, "SDL ERROR");
 			}
 		}
+
+		IMGUI_CHECKVERSION();
 	}
 
 	SDLApplication::~SDLApplication()

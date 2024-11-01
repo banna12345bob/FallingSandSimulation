@@ -60,7 +60,7 @@ public:
 			this->lastUpdated = frameIndex;
 		}
 
-		virtual void swap(Particle* destination) {
+		void swap(Particle* destination) {
 			int OldX = this->x;
 			int OldY = this->y;
 			Sandstone::Vector2d OldPos = this->cellPos;
@@ -77,7 +77,6 @@ public:
 			cells->at(std::make_pair(destination->cellPos.x, destination->cellPos.y)) = destination;
 
 			cells->at(std::make_pair(this->cellPos.x, this->cellPos.y)) = this;
-
 		}
 	};
 
@@ -115,28 +114,25 @@ public:
 			this->cellPos = particle->cellPos;
 
 			this->particleType = SAND;
-
-
-			//this->cells = cells;
 		}
 
 		virtual void update(float frameIndex) override {
 			if (std::round(lastUpdated) == std::round(frameIndex)) {
 				return;
 			}
+			this->lastUpdated = frameIndex;
 			if (cellPos.y + 1 != gridSize->y) {
 				if (cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == WATER) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
+					return this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
 
-				} else if (cellPos.x != 0 && (cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == WATER)) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
+				} if (cellPos.x != 0 && (cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == WATER)) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
 
-				} else if (cellPos.x + 1 != gridSize->x && (cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == WATER)) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
+				} if (cellPos.x + 1 != gridSize->x && (cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == WATER)) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
 
 				}
 			}
-			this->lastUpdated = frameIndex;
 		}
 	};
 
@@ -158,26 +154,26 @@ public:
 			if (std::round(lastUpdated) == std::round(frameIndex)) {
 				return;
 			}
+			this->lastUpdated = frameIndex;
 			if (cellPos.y + 1 != gridSize->y) {
 				if (cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == AIR) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
+					return this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
 
-				} else if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
+				} if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
 
-				} else if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
+				} if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
 
-				} else if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y))->particleType == AIR) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y)));
+				} if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y))->particleType == AIR) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y)));
 
-				} else if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y))->particleType == AIR) {
-					this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y)));
+				} if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y))->particleType == AIR) {
+					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y)));
 
 				}
 
 			}
-			this->lastUpdated = frameIndex;
 		}
 	};
 

@@ -7,6 +7,8 @@
 #include "Application.h"
 #include <SDL.h>
 
+#include <imgui/imgui.h>
+
 namespace Sandstone {
 
 	struct Vector2d {
