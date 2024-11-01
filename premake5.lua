@@ -15,7 +15,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["spdlog"] = "%{wks.location}/sandstone/vendor/spdlog/include"
 IncludeDir["sdl2"] = "%{wks.location}/sandstone/vendor/SDL2/include"
-IncludeDir["imgui"] = "%{wks.location}/sandstone/vendor/imgui"
+IncludeDir["ImGui"] = "%{wks.location}/sandstone/vendor/imgui"
 
 group "Dependencies"
 	include "sandstone/vendor/imgui"

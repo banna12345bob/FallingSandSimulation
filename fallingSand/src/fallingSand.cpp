@@ -1,5 +1,8 @@
 #include <sandstone.h>
 
+//#include <imgui/imgui.h>
+//#include <imgui/backends/imgui_impl_sdl3.h>
+//#include <imgui/backends/imgui_impl_sdlrenderer3.h>
 
 class fallingSand : public Sandstone::SDLApplication
 {
@@ -245,6 +248,7 @@ public:
 			SS_INFO("fps: {0}", 1000 / deltaTime);
 
 			if (SDL_PollEvent(&e)) {
+				//ImGui_ImplSDL3_ProcessEvent(&e);
 				switch (e.type) {
 				case SDL_QUIT:
 					this->running = false;
@@ -297,6 +301,9 @@ public:
 				}
 			}
 
+			/*ImGui_ImplSDLRenderer3_NewFrame();
+			ImGui_ImplSDL3_NewFrame();
+			ImGui::NewFrame();*/
 
 			SDL_GetMouseState(&mouseRect->x, &mouseRect->y);
 

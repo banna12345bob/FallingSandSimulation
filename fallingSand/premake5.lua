@@ -16,10 +16,9 @@ project "fallingSand"
 	includedirs
 	{
 		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.sdl2}",
 		"%{wks.location}/sandstone/src",
 		"%{wks.location}/sandstone/vendor",
-		"%{IncludeDir.imgui}",
-		"%{IncludeDir.sdl2}"
 	}
 
 	links

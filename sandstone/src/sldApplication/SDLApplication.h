@@ -7,8 +7,6 @@
 #include "Application.h"
 #include <SDL.h>
 
-#include <imgui/imgui.h>
-
 namespace Sandstone {
 
 	struct Vector2d {
@@ -61,7 +59,7 @@ namespace Sandstone {
 		//The surface contained by the window
 		SDL_Surface* screenSurface = NULL;
 
-		SDL_Renderer* renderer;
+		SDL_Renderer* renderer = NULL;
 	};
 
 	//	To be defined in client

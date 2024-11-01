@@ -1,6 +1,9 @@
 #include "SDLApplication.h"
 #include "Log.h"
 
+#include <imgui.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlrenderer3.h>
 
 namespace Sandstone {
 	SDLApplication::SDLApplication()
@@ -23,6 +26,12 @@ namespace Sandstone {
 		}
 
 		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+
+		ImGui::StyleColorsDark();
+
+		//ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+		//ImGui_ImplSDLRenderer3_Init(renderer);
 	}
 
 	SDLApplication::~SDLApplication()

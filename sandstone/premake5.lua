@@ -17,15 +17,15 @@ project "sandstone"
 	{
 		"src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.imgui}",
-		"%{IncludeDir.sdl2}"
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	links 
 	{
-		"imgui",
 		"SDL2",
-		"SDL2main"
+		"SDL2main",
+		"ImGui"
 	}
 
 	filter "system:windows"
