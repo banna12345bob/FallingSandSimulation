@@ -224,7 +224,7 @@ public:
 	}
 	~fallingSand()
 	{
-
+		cells.clear();
 	}
 
 	void fallingSand::Run() {
@@ -260,16 +260,24 @@ public:
 					mouseDown = false;
 					break;
 				case SDL_KEYDOWN:
-					if (e.key.keysym.scancode == SDL_SCANCODE_S)
+					switch (e.key.keysym.scancode)
+					{
+					case SDL_SCANCODE_S:
 						placing = SAND;
-					else if (e.key.keysym.scancode == SDL_SCANCODE_W)
+						break;
+					case SDL_SCANCODE_W:
 						placing = WATER;
-					else if (e.key.keysym.scancode == SDL_SCANCODE_C)
+						break;
+					case SDL_SCANCODE_C:
 						placing = STONE;
-					else if (e.key.keysym.scancode == SDL_SCANCODE_A)
+						break;
+					case SDL_SCANCODE_A:
 						placing = AIR;
-					else
+						break;
+					default:
 						placing = NONE;
+						break;
+					}
 				}
 			}
 

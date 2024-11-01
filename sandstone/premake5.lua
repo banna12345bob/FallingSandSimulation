@@ -17,7 +17,6 @@ project "sandstone"
 	{
 		"src",
 		"vendor/spdlog/include",
-		"vendor/json/include",
 		"%{IncludeDir.sdl2}"
 	}
 
@@ -25,10 +24,6 @@ project "sandstone"
 	{
 		"SDL2",
 		"SDL2main"
-	}
-
-	postbuildcommands {
-		"{COPY} %{wks.location}/%{prj.name}/version.json %{cfg.targetdir}"
 	}
 
 	filter "system:windows"
