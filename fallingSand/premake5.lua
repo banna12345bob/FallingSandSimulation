@@ -17,17 +17,19 @@ project "fallingSand"
 	{
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.SDL2}",
+		"%{IncludeDir.ImGui}",
 		"%{wks.location}/sandstone/src",
 		"%{wks.location}/sandstone/vendor",
 	}
 
 	links
 	{
-		"sandstone"
+		"sandstone",
+		-- "ImGui"
 	}
 
 	postbuildcommands {
-		"{COPY} %{IncludeDir.SDL2}/../lib/x86/SDL2.dll %{cfg.targetdir}"
+		"{COPY} %{IncludeDir.SDL2}/../lib/x64/SDL2.dll %{cfg.targetdir}"
 	}
 	
 	filter "system:windows"

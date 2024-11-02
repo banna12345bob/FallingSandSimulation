@@ -2,8 +2,8 @@
 #include "Log.h"
 
 #include <imgui.h>
-#include <backends/imgui_impl_sdl3.h>
-#include <backends/imgui_impl_sdlrenderer3.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_sdlrenderer2.h>
 
 namespace Sandstone {
 	SDLApplication::SDLApplication(const char* windowName, const int width, const int height)
@@ -26,13 +26,13 @@ namespace Sandstone {
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 
 		ImGui::StyleColorsDark();
 
-		//SDL_version
-
-		//ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
-		//ImGui_ImplSDLRenderer3_Init(renderer);
+		ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+		ImGui_ImplSDLRenderer2_Init(renderer);
 	}
 
 	SDLApplication::~SDLApplication()

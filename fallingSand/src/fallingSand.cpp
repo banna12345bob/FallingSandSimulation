@@ -1,8 +1,10 @@
 #include <sandstone.h>
 
-//#include <imgui/imgui.h>
-//#include <imgui/backends/imgui_impl_sdl3.h>
-//#include <imgui/backends/imgui_impl_sdlrenderer3.h>
+#include <SDL.h>
+
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_sdlrenderer2.h>
 
 class fallingSand : public Sandstone::SDLApplication
 {
@@ -249,7 +251,7 @@ public:
 			SS_INFO("fps: {0}", 1000 / deltaTime);
 
 			if (SDL_PollEvent(&e)) {
-				//ImGui_ImplSDL3_ProcessEvent(&e);
+				ImGui_ImplSDL2_ProcessEvent(&e);
 				switch (e.type) {
 				case SDL_QUIT:
 					this->running = false;
@@ -302,9 +304,12 @@ public:
 				}
 			}
 
-			/*ImGui_ImplSDLRenderer3_NewFrame();
-			ImGui_ImplSDL3_NewFrame();
-			ImGui::NewFrame();*/
+			ImGui_ImplSDLRenderer2_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+
+			ImGui::ShowDemoWindow();
+			ImGui::ShowAboutWindow();
 
 			SDL_GetMouseState(&mouseRect->x, &mouseRect->y);
 
@@ -334,6 +339,9 @@ public:
 			SDL_SetRenderDrawColor(this->renderer, 0, 255, 0, 255);
 			SDL_RenderFillRect(this->renderer, mouseRect);
 
+			ImGui::Render();
+			ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+
 			SDL_RenderPresent(this->renderer);
 
 			b = a;
@@ -341,6 +349,10 @@ public:
 		}
 
 		// Kill everything
+		ImGui_ImplSDLRenderer2_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+
 		SDL_DestroyRenderer(this->renderer);
 		SDL_DestroyWindow(this->window);
 

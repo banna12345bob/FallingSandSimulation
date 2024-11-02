@@ -30,7 +30,7 @@ project "sandstone"
 
 	libdirs
 	{
-		"%{IncludeDir.SDL2}/../lib/x86/"
+		"%{IncludeDir.SDL2}/../lib/x64/"
 	}
 
 	filter "system:windows"
