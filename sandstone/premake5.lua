@@ -17,7 +17,7 @@ project "sandstone"
 	{
 		"src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.SDL2}",
 		"%{IncludeDir.ImGui}"
 	}
 
@@ -26,6 +26,11 @@ project "sandstone"
 		"SDL2",
 		"SDL2main",
 		"ImGui"
+	}
+
+	libdirs
+	{
+		"%{IncludeDir.SDL2}/../lib/x86/"
 	}
 
 	filter "system:windows"
