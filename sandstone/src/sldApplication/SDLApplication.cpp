@@ -28,6 +28,7 @@ namespace Sandstone {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows Doesn't support SDLrenderer2
 
 		ImGui::StyleColorsDark();
 

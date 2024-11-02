@@ -6,6 +6,8 @@
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_sdlrenderer2.h>
 
+#include "fallingSandGUI.h"
+
 class fallingSand : public Sandstone::SDLApplication
 {
 public:
@@ -284,13 +286,17 @@ public:
 				}
 			}
 
+			ImGui_ImplSDLRenderer2_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+
 			if (mouseDown) {
 				for (int x = 0; x < brushSize->x; x++)
 				{
 					for (int y = 0; y < brushSize->y; y++)
 					{
-						if ((mouseRect->y * gridSize->y / windowH) + y < gridSize->y)
-							if ((mouseRect->x * gridSize->x / windowW) + x < gridSize->x)
+						if ((mouseRect->y * gridSize->y / windowH) + y < gridSize->y && (mouseRect->y * gridSize->y / windowH) + y >= 0)
+							if ((mouseRect->x * gridSize->x / windowW) + x < gridSize->x && (mouseRect->x * gridSize->x / windowW) + x >= 0)
 								if (placing == SAND)
 									cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new sand(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
 								else if (placing == WATER)
@@ -304,12 +310,7 @@ public:
 				}
 			}
 
-			ImGui_ImplSDLRenderer2_NewFrame();
-			ImGui_ImplSDL2_NewFrame();
-			ImGui::NewFrame();
-
-			ImGui::ShowDemoWindow();
-			ImGui::ShowAboutWindow();
+			fallingSandGUI::render();
 
 			SDL_GetMouseState(&mouseRect->x, &mouseRect->y);
 
@@ -340,7 +341,7 @@ public:
 			SDL_RenderFillRect(this->renderer, mouseRect);
 
 			ImGui::Render();
-			ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+			ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), this->renderer);
 
 			SDL_RenderPresent(this->renderer);
 
@@ -356,7 +357,7 @@ public:
 		SDL_DestroyRenderer(this->renderer);
 		SDL_DestroyWindow(this->window);
 
-		//Quit SDL subsystems
+		//Quit SDL
 		SDL_Quit();
 	}
 
