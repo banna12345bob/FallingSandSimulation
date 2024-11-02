@@ -22,3 +22,6 @@ output/builds
 *.xcuserstate
 *.log
 *.pyc
+
+
+imgui.ini

@@ -37,7 +37,18 @@ namespace Sandstone {
 	}
 
 	SDLApplication::~SDLApplication()
-	{}
+	{
+		// Kill everything
+		ImGui_ImplSDLRenderer2_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+
+		SDL_DestroyRenderer(this->renderer);
+		SDL_DestroyWindow(this->window);
+
+		//Quit SDL
+		SDL_Quit();
+	}
 
 	void SDLApplication::Run()
 	{

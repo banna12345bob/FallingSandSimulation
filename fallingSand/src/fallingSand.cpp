@@ -61,6 +61,7 @@ public:
 		Particle(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::map<std::pair<int, int>, Particle*>* cells) :
 			Cell(window, cellSize, gridSize) {
 			this->cells = cells;
+			lastUpdated = 0;
 		}
 
 		virtual void update(float frameIndex) {
@@ -208,22 +209,7 @@ public:
 		cellSize = new Sandstone::Vector2d(windowW / gridSize->x, windowH / gridSize->y);
 
 
-		for (int x = 0; x <= gridSize->x; x++)
-		{
-			for (int y = 0; y < gridSize->y; y++)
-			{
-				cells[std::make_pair(x, y)] = new air(this->window, cellSize, gridSize, &cells);
-
-				cells[std::make_pair(x, y)]->x = cells[std::make_pair(x, y)]->w * x;
-				cells[std::make_pair(x, y)]->y = cells[std::make_pair(x, y)]->h * y;
-
-				cells[std::make_pair(x, y)]->cellPos = Sandstone::Vector2d(x, y);
-
-				/*if (x == 1 && y == 0) {
-					cells[std::make_pair(x, y)] = new sand(cells[std::make_pair(x, y)]);
-				}*/
-			}
-		}
+		this->setupGrid();
 
 	}
 	~fallingSand()
@@ -278,6 +264,10 @@ public:
 						break;
 					case SDL_SCANCODE_A:
 						placing = AIR;
+						break;
+					case SDL_SCANCODE_ESCAPE:
+						this->setupGrid();
+						placing = NONE;
 						break;
 					default:
 						placing = NONE;
@@ -348,17 +338,23 @@ public:
 			b = a;
 			frameIndex += 0.05 * deltaTime;
 		}
+	}
 
-		// Kill everything
-		ImGui_ImplSDLRenderer2_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImGui::DestroyContext();
+	void setupGrid() {
+		cells.clear();
 
-		SDL_DestroyRenderer(this->renderer);
-		SDL_DestroyWindow(this->window);
+		for (int x = 0; x <= gridSize->x; x++)
+		{
+			for (int y = 0; y < gridSize->y; y++)
+			{
+				cells[std::make_pair(x, y)] = new air(this->window, cellSize, gridSize, &cells);
 
-		//Quit SDL
-		SDL_Quit();
+				cells[std::make_pair(x, y)]->x = cells[std::make_pair(x, y)]->w * x;
+				cells[std::make_pair(x, y)]->y = cells[std::make_pair(x, y)]->h * y;
+
+				cells[std::make_pair(x, y)]->cellPos = Sandstone::Vector2d(x, y);
+			}
+		}
 	}
 
 private:
