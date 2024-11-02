@@ -196,7 +196,8 @@ public:
 		}
 	};
 
-	fallingSand()
+	fallingSand(const char* windowName, const int width, const int height)
+		: Sandstone::SDLApplication(windowName, width, height)
 	{
 		SDL_GetWindowSize(window, &windowW, &windowH);
 
@@ -361,5 +362,5 @@ private:
 
 Sandstone::Application* Sandstone::CreateApplication()
 {
-	return new fallingSand();
+	return new fallingSand("Falling Sand", 540, 540);
 }

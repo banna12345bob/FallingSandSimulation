@@ -49,7 +49,7 @@ namespace Sandstone {
 	class SDLApplication : public Application
 	{
 	public:
-		SDLApplication();
+		SDLApplication(const char* windowName, const int width, const int height);
 		virtual ~SDLApplication();
 
 		virtual void Run() override;
