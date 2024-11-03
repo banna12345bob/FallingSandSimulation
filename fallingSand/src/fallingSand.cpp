@@ -18,7 +18,19 @@ public:
 		AIR,
 		SAND,
 		WATER,
-		STONE
+		WOOD
+	};
+
+	enum directions
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		UPLEFT,
+		UPRIGHT,
+		DOWNLEFT,
+		DOWNRIGHT
 	};
 
 	struct Cell : SDL_Rect
@@ -45,11 +57,6 @@ public:
 
 			w = cellSize->x;
 			h = cellSize->y;
-
-			/*colour.r = 0;
-			colour.g = 0;
-			colour.b = 0;
-			colour.a = 255;*/
 		}
 	};
 
@@ -64,9 +71,7 @@ public:
 			lastUpdated = 0;
 		}
 
-		virtual void update(float frameIndex) {
-			this->lastUpdated = frameIndex;
-		}
+		virtual void update(float frameIndex) {}
 
 		void swap(Particle* destination) {
 			int OldX = this->x;
@@ -86,6 +91,28 @@ public:
 
 			cells->at(std::make_pair(this->cellPos.x, this->cellPos.y)) = this;
 		}
+
+		Particle* getCell(directions direction) {
+			if (direction == UP && this->cellPos.y != 0) {
+				return cells->at(std::make_pair(this->cellPos.x, this->cellPos.y - 1));
+			} if (direction == DOWN && this->cellPos.y + 1 != gridSize->y) {
+				return cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1));
+			} if (direction == RIGHT && this->cellPos.x + 1 != gridSize->x) {
+				return cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y));
+			} if (direction == LEFT && this->cellPos.x != 0) {
+				return cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y));
+			} if (direction == UPRIGHT && this->cellPos.y != 0 && this->cellPos.x + 1 != gridSize->x) {
+				return cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y - 1));
+			} if (direction == UPLEFT && this->cellPos.y != 0 && this->cellPos.x != 0) {
+				return cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y - 1));
+			} if (direction == DOWNRIGHT && this->cellPos.y + 1 != gridSize->y && this->cellPos.x + 1 != gridSize->x) {
+				return cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1));
+			} if (direction == DOWNLEFT && this->cellPos.y + 1 != gridSize->y && this->cellPos.x != 0) {
+				return cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1));
+			}
+			return cells->at(std::make_pair(-1, -1));
+		}
+
 	};
 
 	struct air : Particle {
@@ -128,18 +155,14 @@ public:
 			if (std::round(lastUpdated) == std::round(frameIndex)) {
 				return;
 			}
+			Particle* cell;
 			this->lastUpdated = frameIndex;
-			if (cellPos.y + 1 != gridSize->y) {
-				if (cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == WATER) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
-
-				} if (cellPos.x != 0 && (cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == WATER)) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
-
-				} if (cellPos.x + 1 != gridSize->x && (cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR || cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == WATER)) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
-
-				}
+			if ((cell = this->getCell(DOWN))->particleType == AIR || (cell = this->getCell(DOWN))->particleType == WATER) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNLEFT))->particleType == AIR || (cell = this->getCell(DOWNLEFT))->particleType == WATER) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNRIGHT))->particleType == AIR || (cell = this->getCell(DOWNRIGHT))->particleType == WATER) {
+				return this->swap(cell);
 			}
 		}
 	};
@@ -162,32 +185,25 @@ public:
 			if (std::round(lastUpdated) == std::round(frameIndex)) {
 				return;
 			}
+			Particle* cell;
 			this->lastUpdated = frameIndex;
-			if (cellPos.y + 1 != gridSize->y) {
-				if (cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1))->particleType == AIR) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x, this->cellPos.y + 1)));
-
-				} if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1))->particleType == AIR) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y + 1)));
-
-				} if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1))->particleType == AIR) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y + 1)));
-
-				} if (cellPos.x != 0 && cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y))->particleType == AIR) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x - 1, this->cellPos.y)));
-
-				} if (cellPos.x + 1 != gridSize->x && cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y))->particleType == AIR) {
-					return this->swap(cells->at(std::make_pair(this->cellPos.x + 1, this->cellPos.y)));
-
-				}
-
+			if ((cell = this->getCell(DOWN))->particleType == AIR) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNLEFT))->particleType == AIR) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNRIGHT))->particleType == AIR) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(LEFT))->particleType == AIR) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(RIGHT))->particleType == AIR) {
+				return this->swap(cell);
 			}
 		}
 	};
 
 
-	struct stone : Particle {
-		stone(Particle* particle) :
+	struct wood : Particle {
+		wood(Particle* particle) :
 			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
 			colour.r = 55;
 			colour.g = 55;
@@ -197,7 +213,7 @@ public:
 			this->y = particle->y;
 			this->cellPos = particle->cellPos;
 
-			this->particleType = STONE;
+			this->particleType = WOOD;
 		}
 	};
 
@@ -230,6 +246,8 @@ public:
 		SDL_Rect* mouseRect = new SDL_Rect();
 		float frameIndex = 0;
 
+		Particle* cell;
+
 		while (this->running == true) {
 			a = SDL_GetTicks();
 
@@ -260,7 +278,7 @@ public:
 						placing = WATER;
 						break;
 					case SDL_SCANCODE_C:
-						placing = STONE;
+						placing = WOOD;
 						break;
 					case SDL_SCANCODE_A:
 						placing = AIR;
@@ -285,17 +303,29 @@ public:
 				{
 					for (int y = 0; y < brushSize->y; y++)
 					{
-						if ((mouseRect->y * gridSize->y / windowH) + y < gridSize->y && (mouseRect->y * gridSize->y / windowH) + y >= 0)
-							if ((mouseRect->x * gridSize->x / windowW) + x < gridSize->x && (mouseRect->x * gridSize->x / windowW) + x >= 0)
-								if (placing == SAND)
-									cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new sand(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
-								else if (placing == WATER)
-									cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new water(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
-								else if (placing == STONE)
-									cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new stone(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
-								else if (placing == AIR)
-									cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new air(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
-
+						if ((mouseRect->y * gridSize->y / windowH) + y >= gridSize->y || (mouseRect->y * gridSize->y / windowH) + y < 0) {
+							break;
+						}
+						if ((mouseRect->x * gridSize->x / windowW) + x >= gridSize->x || (mouseRect->x * gridSize->x / windowW) + x < 0) {
+							break;
+						}
+						switch (placing)
+						{
+						case AIR:
+							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new air(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
+							break;
+						case SAND:
+							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new sand(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
+							break;
+						case WATER:
+							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new water(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
+							break;
+						case WOOD:
+							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new wood(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
+							break;
+						default:
+							break;
+						}
 					}
 				}
 			}
@@ -307,20 +337,22 @@ public:
 			SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
 			SDL_RenderClear(this->renderer);
 
+
 			for (int x = gridSize->x - 1; x >= 0; x--)
 			{				
 				for (int y = gridSize->y - 1; y >= 0; y--)
 				{
-					if (cells[std::make_pair(x, y)]->particleType != AIR) {
-						SDL_SetRenderDrawColor(this->renderer, cells[std::make_pair(x, y)]->colour.r, cells[std::make_pair(x, y)]->colour.g, cells[std::make_pair(x, y)]->colour.b, cells[std::make_pair(x, y)]->colour.a);
-						SDL_RenderFillRect(this->renderer, cells[std::make_pair(x, y)]);
-					}
-					/*else {
-						SDL_SetRenderDrawColor(this->renderer, cells[std::make_pair(x, y)]->colour.r, cells[std::make_pair(x, y)]->colour.g, cells[std::make_pair(x, y)]->colour.b, cells[std::make_pair(x, y)]->colour.a);
-						SDL_RenderDrawRect(this->renderer, cells[std::make_pair(x, y)]);
-					}*/
+					cell = cells[std::make_pair(x, y)];
+					if (cell->particleType != AIR) {
+						SDL_SetRenderDrawColor(this->renderer,cell->colour.r, cell->colour.g, cell->colour.b, cell->colour.a);
+						SDL_RenderFillRect(this->renderer, cell);
 
-					cells[std::make_pair(x, y)]->update(frameIndex);
+						cell->update(frameIndex);
+					} //else {
+						//SDL_SetRenderDrawColor(this->renderer, cells[std::make_pair(x, y)]->colour.r, cells[std::make_pair(x, y)]->colour.g, cells[std::make_pair(x, y)]->colour.b, cells[std::make_pair(x, y)]->colour.a);
+						//SDL_RenderDrawRect(this->renderer, cells[std::make_pair(x, y)]);
+					//}
+
 				}
 			}
 
@@ -342,6 +374,7 @@ public:
 
 	void setupGrid() {
 		cells.clear();
+		cells[std::make_pair(-1, -1)] = new Particle(this->window, cellSize, gridSize, &cells);
 
 		for (int x = 0; x <= gridSize->x; x++)
 		{
@@ -363,7 +396,7 @@ private:
 	Sandstone::Vector2d* gridSize = new Sandstone::Vector2d(60, 60);
 	Sandstone::Vector2d* cellSize;
 
-	Sandstone::Vector2d* brushSize = new Sandstone::Vector2d(2);
+	Sandstone::Vector2d* brushSize = new Sandstone::Vector2d(10);
 
 	int windowW;
 	int windowH;
