@@ -12,13 +12,14 @@ class fallingSand : public Sandstone::SDLApplication
 {
 public:
 
-	enum particleTypes
+	enum particles
 	{
 		NONE,
 		AIR,
 		SAND,
 		WATER,
-		WOOD
+		WOOD,
+		METHANE
 	};
 
 	enum directions
@@ -46,8 +47,6 @@ public:
 
 		SDL_Colour colour = { 0, 0, 0, 255 };
 
-		particleTypes particleType = NONE;
-
 		Cell(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize) {
 			this->window = window;
 			this->cellSize = cellSize;
@@ -63,6 +62,8 @@ public:
 	struct Particle : Cell {
 		std::map<std::pair<int, int>, Particle*>* cells;
 
+		// Desnity on kg/m^3: default inf
+		double desnsity = INFINITY;
 		float lastUpdated;
 
 		Particle(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::map<std::pair<int, int>, Particle*>* cells) :
@@ -71,9 +72,17 @@ public:
 			lastUpdated = 0;
 		}
 
-		virtual void update(float frameIndex) {}
+		virtual bool update(float frameIndex) {
+			if (std::round(lastUpdated) == std::round(frameIndex)) {
+				return false;
+			}
+			return true;
+		}
 
-		void swap(Particle* destination) {
+		bool swap(Particle* destination) {
+			if (destination->cellPos.x == -1 && destination->cellPos.y == -1) {
+				return false;
+			}
 			int OldX = this->x;
 			int OldY = this->y;
 			Sandstone::Vector2d OldPos = this->cellPos;
@@ -90,6 +99,7 @@ public:
 			cells->at(std::make_pair(destination->cellPos.x, destination->cellPos.y)) = destination;
 
 			cells->at(std::make_pair(this->cellPos.x, this->cellPos.y)) = this;
+			return true;
 		}
 
 		Particle* getCell(directions direction) {
@@ -115,93 +125,6 @@ public:
 
 	};
 
-	struct air : Particle {
-		air(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::map<std::pair<int, int>, Particle*>* cells) :
-			Particle(window, cellSize, gridSize, cells) {
-			colour.r = 255;
-
-			this->particleType = AIR;
-		}
-
-		air(Particle* particle) :
-			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
-			colour.r = 255;
-			colour.g = 0;
-			colour.b = 0;
-
-			this->x = particle->x;
-			this->y = particle->y;
-			this->cellPos = particle->cellPos;
-
-			this->particleType = AIR;
-		}
-	};
-
-	struct sand : Particle {
-		sand(Particle* particle) :
-			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
-			colour.r = 255;
-			colour.g = 255;
-			colour.b = 0;
-
-			this->x = particle->x;
-			this->y = particle->y;
-			this->cellPos = particle->cellPos;
-
-			this->particleType = SAND;
-		}
-
-		virtual void update(float frameIndex) override {
-			if (std::round(lastUpdated) == std::round(frameIndex)) {
-				return;
-			}
-			Particle* cell;
-			this->lastUpdated = frameIndex;
-			if ((cell = this->getCell(DOWN))->particleType == AIR || (cell = this->getCell(DOWN))->particleType == WATER) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(DOWNLEFT))->particleType == AIR || (cell = this->getCell(DOWNLEFT))->particleType == WATER) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(DOWNRIGHT))->particleType == AIR || (cell = this->getCell(DOWNRIGHT))->particleType == WATER) {
-				return this->swap(cell);
-			}
-		}
-	};
-
-	struct water : Particle {
-		water(Particle* particle) :
-			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
-			colour.r = 0;
-			colour.g = 0;
-			colour.b = 255;
-
-			this->x = particle->x;
-			this->y = particle->y;
-			this->cellPos = particle->cellPos;
-
-			this->particleType = WATER;
-		}
-
-		virtual void update(float frameIndex) override {
-			if (std::round(lastUpdated) == std::round(frameIndex)) {
-				return;
-			}
-			Particle* cell;
-			this->lastUpdated = frameIndex;
-			if ((cell = this->getCell(DOWN))->particleType == AIR) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(DOWNLEFT))->particleType == AIR) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(DOWNRIGHT))->particleType == AIR) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(LEFT))->particleType == AIR) {
-				return this->swap(cell);
-			} if ((cell = this->getCell(RIGHT))->particleType == AIR) {
-				return this->swap(cell);
-			}
-		}
-	};
-
-
 	struct wood : Particle {
 		wood(Particle* particle) :
 			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
@@ -213,7 +136,175 @@ public:
 			this->y = particle->y;
 			this->cellPos = particle->cellPos;
 
-			this->particleType = WOOD;
+			this->desnsity = 1e100;
+		}
+	};
+
+	struct solid : Particle {
+		solid(Particle* particle) :
+			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
+
+			this->x = particle->x;
+			this->y = particle->y;
+			this->cellPos = particle->cellPos;
+		}
+
+		virtual bool update(float frameIndex) override {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+
+			Particle* cell;
+			this->lastUpdated = frameIndex;
+			if ((cell = this->getCell(DOWN))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNLEFT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNRIGHT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			}
+			return false;
+		}
+	};
+
+	struct sand : solid {
+		sand(Particle* particle) :
+			solid(particle) {
+			colour.r = 255;
+			colour.g = 255;
+			colour.b = 0;
+
+			this->desnsity = 1602;
+		}
+		virtual bool update(float frameIndex) {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+			if (solid::update(frameIndex)) {
+				return true;
+			}
+			return true;
+		}
+	};
+
+	struct liquid : Particle {
+		liquid(Particle* particle) :
+			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
+			this->x = particle->x;
+			this->y = particle->y;
+			this->cellPos = particle->cellPos;
+		}
+
+		virtual bool update(float frameIndex) override {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+
+			Particle* cell;
+			this->lastUpdated = frameIndex;
+			if ((cell = this->getCell(DOWN))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNLEFT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(DOWNRIGHT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(LEFT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(RIGHT))->desnsity < this->desnsity) {
+				return this->swap(cell);
+			}
+			return false;
+		}
+	};
+
+	struct water : liquid {
+		water(Particle* particle) :
+			liquid(particle) {
+			colour.r = 0;
+			colour.g = 0;
+			colour.b = 255;
+
+			this->desnsity = 997;
+		}
+		virtual bool update(float frameIndex) {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+			return liquid::update(frameIndex);
+		}
+	};
+
+	struct gas : Particle {
+		gas(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::map<std::pair<int, int>, Particle*>* cells) :
+			Particle(window, cellSize, gridSize, cells) {}
+
+		gas(Particle* particle) :
+			Particle(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
+			this->x = particle->x;
+			this->y = particle->y;
+			this->cellPos = particle->cellPos;
+		}
+
+		virtual bool update(float frameIndex) override {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+
+			Particle* cell;
+			this->lastUpdated = frameIndex;
+			if ((cell = this->getCell(UP))->desnsity > this->desnsity && cell->desnsity < 10e99) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(UPLEFT))->desnsity > this->desnsity && cell->desnsity < 10e99) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(UPRIGHT))->desnsity > this->desnsity && cell->desnsity < 10e99) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(LEFT))->desnsity > this->desnsity && cell->desnsity < 10e99) {
+				return this->swap(cell);
+			} if ((cell = this->getCell(RIGHT))->desnsity > this->desnsity && cell->desnsity < 10e99) {
+				return this->swap(cell);
+			}
+			return false;
+		}
+	};
+
+	struct air : gas {
+		air(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::map<std::pair<int, int>, Particle*>* cells) :
+			gas(window, cellSize, gridSize, cells) {
+			this->desnsity = 1.225;
+		}
+
+		air(Particle* particle) :
+			gas(particle->window, particle->cellSize, particle->gridSize, particle->cells) {
+			colour.r = 0;
+			colour.g = 0;
+			colour.b = 0;
+
+			this->x = particle->x;
+			this->y = particle->y;
+			this->cellPos = particle->cellPos;
+
+			this->desnsity = 1.225;
+		}
+
+		virtual bool update(float frameIndex) {
+			return false;
+		}
+	};
+
+	struct methane : gas {
+		methane(Particle* particle) :
+			gas(particle) {
+			colour.r = 0;
+			colour.g = 255;
+			colour.b = 0;
+
+			this->desnsity = 0.1786;
+		}
+		virtual bool update(float frameIndex) {
+			if (!Particle::update(frameIndex)) {
+				return false;
+			}
+			return gas::update(frameIndex);
 		}
 	};
 
@@ -239,7 +330,7 @@ public:
 		b = SDL_GetTicks();
 		bool mouseDown = false;
 
-		particleTypes placing = NONE;
+		particles placing = NONE;
 
 
 		SDL_Event e;
@@ -279,6 +370,9 @@ public:
 						break;
 					case SDL_SCANCODE_C:
 						placing = WOOD;
+						break;
+					case SDL_SCANCODE_G:
+						placing = METHANE;
 						break;
 					case SDL_SCANCODE_A:
 						placing = AIR;
@@ -323,6 +417,9 @@ public:
 						case WOOD:
 							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new wood(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
 							break;
+						case METHANE:
+							cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)] = new methane(cells[std::make_pair((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y)]);
+							break;
 						default:
 							break;
 						}
@@ -338,17 +435,21 @@ public:
 			SDL_RenderClear(this->renderer);
 
 
-			for (int x = gridSize->x - 1; x >= 0; x--)
+			for (int x = 0; x <= gridSize->x; x++)
 			{				
-				for (int y = gridSize->y - 1; y >= 0; y--)
+				for (int y = 0; y <= gridSize->y; y++)
 				{
 					cell = cells[std::make_pair(x, y)];
-					if (cell->particleType != AIR) {
-						SDL_SetRenderDrawColor(this->renderer,cell->colour.r, cell->colour.g, cell->colour.b, cell->colour.a);
-						SDL_RenderFillRect(this->renderer, cell);
+					if (y % 2) {
+						cell = cells[std::make_pair(gridSize->x - x, y)];
+					}
 
-						cell->update(frameIndex);
-					} //else {
+					//if (cell->particleType != GAS) {
+					SDL_SetRenderDrawColor(this->renderer, cell->colour.r, cell->colour.g, cell->colour.b, cell->colour.a);
+					SDL_RenderFillRect(this->renderer, cell);
+
+					cell->update(frameIndex);
+					//} //else {
 						//SDL_SetRenderDrawColor(this->renderer, cells[std::make_pair(x, y)]->colour.r, cells[std::make_pair(x, y)]->colour.g, cells[std::make_pair(x, y)]->colour.b, cells[std::make_pair(x, y)]->colour.a);
 						//SDL_RenderDrawRect(this->renderer, cells[std::make_pair(x, y)]);
 					//}
@@ -368,17 +469,18 @@ public:
 			SDL_RenderPresent(this->renderer);
 
 			b = a;
-			frameIndex += 0.05 * deltaTime;
+			frameIndex += 0.025 * deltaTime;
 		}
 	}
 
 	void setupGrid() {
 		cells.clear();
 		cells[std::make_pair(-1, -1)] = new Particle(this->window, cellSize, gridSize, &cells);
+		cells[std::make_pair(-1, -1)]->cellPos = Sandstone::Vector2d(-1, -1);
 
 		for (int x = 0; x <= gridSize->x; x++)
 		{
-			for (int y = 0; y < gridSize->y; y++)
+			for (int y = 0; y <= gridSize->y; y++)
 			{
 				cells[std::make_pair(x, y)] = new air(this->window, cellSize, gridSize, &cells);
 
