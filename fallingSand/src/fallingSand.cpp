@@ -125,26 +125,26 @@ public:
 						if ((mouseRect->x * gridSize->x / windowW) + x >= gridSize->x || (mouseRect->x * gridSize->x / windowW) + x < 0) {
 							break;
 						}
-						int pos = ((mouseRect->x * gridSize->x / windowW) + x) + (((mouseRect->y * gridSize->y / windowH) + y) * (gridSize->y + 1));
+						Sandstone::Vector2d pos = Sandstone::Vector2d((mouseRect->x * gridSize->x / windowW) + x, (mouseRect->y * gridSize->y / windowH) + y);
 						switch (placing)
 						{
 						case AIR:
-							cells[pos] = new air(cells[pos]);
+							cells[pos.x][pos.y] = new air(cells[pos.x][pos.y]);
 							break;
 						case SAND:
-							cells[pos] = new sand(cells[pos]);
+							cells[pos.x][pos.y] = new sand(cells[pos.x][pos.y]);
 							break;
 						case WATER:
-							cells[pos] = new water(cells[pos]);
+							cells[pos.x][pos.y] = new water(cells[pos.x][pos.y]);
 							break;
 						case WOOD:
-							cells[pos] = new wood(cells[pos]);
+							cells[pos.x][pos.y] = new wood(cells[pos.x][pos.y]);
 							break;
 						case METHANE:
-							cells[pos] = new methane(cells[pos]);
+							cells[pos.x][pos.y] = new methane(cells[pos.x][pos.y]);
 							break;
 						case OIL:
-							cells[pos] = new oil(cells[pos]);
+							cells[pos.x][pos.y] = new oil(cells[pos.x][pos.y]);
 							break;
 						default:
 							break;
@@ -164,9 +164,9 @@ public:
 			{				
 				for (int y = 0; y <= gridSize->y; y++)
 				{
-					cell = cells[x + (y * (gridSize->y + 1))];
+					cell = cells[x][y];
 					if (y % 2) {
-						cell = cells[(gridSize->x - x) + (y * (gridSize->y + 1))];
+						cell = cells[gridSize->x - x][y];
 					}
 
 					SDL_SetRenderDrawColor(this->renderer, cell->colour.r, cell->colour.g, cell->colour.b, cell->colour.a);
@@ -200,18 +200,24 @@ public:
 		{
 			for (int x = 0; x <= gridSize->x; x++)
 			{
-				cells.push_back(new air(this->window, cellSize, gridSize, &cells));
+				if (cells.size() != (gridSize->x + 1)) {
+					std::vector<Particle*> tempVec;
+					tempVec.push_back(new air(this->window, cellSize, gridSize, &cells));
+					cells.push_back(tempVec);
+				} else {
+					cells[x].push_back(new air(this->window, cellSize, gridSize, &cells));
+				}
 
-				cells[cells.size() - 1]->x = cells[cells.size() - 1]->w * x;
-				cells[cells.size() - 1]->y = cells[cells.size() - 1]->h * y;
+				cells[x][y]->x = cells[x][y]->w * x;
+				cells[x][y]->y = cells[x][y]->h * y;
 
-				cells[cells.size() - 1]->cellPos = Sandstone::Vector2d(x, y);
+				cells[x][y]->cellPos = Sandstone::Vector2d(x, y);
 			}
 		}
 	}
 
 private:
-	std::vector<Particle*> cells;
+	std::vector<std::vector<Particle*>> cells;
 
 	Sandstone::Vector2d* gridSize = new Sandstone::Vector2d(60, 60);
 	Sandstone::Vector2d* cellSize;

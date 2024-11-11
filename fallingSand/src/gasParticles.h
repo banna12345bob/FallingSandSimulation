@@ -3,7 +3,7 @@
 #include "particleTypes.h"
 
 struct air : gas {
-	air(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<Particle*>* cells) :
+	air(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<std::vector<Particle*>>* cells) :
 		gas(window, cellSize, gridSize, cells) {
 		this->density = 1.225;
 	}

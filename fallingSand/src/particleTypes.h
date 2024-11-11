@@ -40,7 +40,7 @@ struct Cell : SDL_Rect
 };
 
 struct Particle : Cell {
-	std::vector<Particle*>* cells;
+	std::vector<std::vector<Particle*>>* cells;
 
 	// Desnity in kg/m^3: default 10e100
 	double density = 10e100;
@@ -50,7 +50,7 @@ struct Particle : Cell {
 
 	double lastUpdated = -1;
 
-	Particle(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<Particle*>* cells) :
+	Particle(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<std::vector<Particle*>>* cells) :
 		Cell(window, cellSize, gridSize) {
 		this->cells = cells;
 	}
@@ -82,30 +82,30 @@ struct Particle : Cell {
 		destination->y = OldY;
 		destination->cellPos = OldPos;
 
-		cells->at(destination->cellPos.x + (destination->cellPos.y * (destination->gridSize->y + 1))) = destination;
+		cells->at(destination->cellPos.x).at(destination->cellPos.y) = destination;
 
-		cells->at(this->cellPos.x + (this->cellPos.y * (this->gridSize->y + 1))) = this;
+		cells->at(this->cellPos.x).at(this->cellPos.y) = this;
 
 		return true;
 	}
 
 	Particle* getCell(directions direction) {
 		if (direction == UP && this->cellPos.y != 0) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) - (gridSize->y + 1));
+			return cells->at(this->cellPos.x).at(this->cellPos.y - 1);
 		} if (direction == DOWN && this->cellPos.y + 1 < gridSize->y) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) + (gridSize->y + 1));
+			return cells->at(this->cellPos.x).at(this->cellPos.y + 1);
 		} if (direction == RIGHT && this->cellPos.x + 1 < gridSize->x) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) + 1);
+			return cells->at(this->cellPos.x + 1).at(this->cellPos.y);
 		} if (direction == LEFT && this->cellPos.x != 0) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) - 1);
+			return cells->at(this->cellPos.x - 1).at(this->cellPos.y);
 		} if (direction == UPRIGHT && this->cellPos.y != 0 && this->cellPos.x + 1 < gridSize->x) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) + 1 - (gridSize->y + 1));
+			return cells->at(this->cellPos.x + 1).at(this->cellPos.y - 1);
 		} if (direction == UPLEFT && this->cellPos.y != 0 && this->cellPos.x != 0) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) - 1 - (gridSize->y + 1));
+			return cells->at(this->cellPos.x - 1).at(this->cellPos.y - 1);
 		}  if (direction == DOWNRIGHT && this->cellPos.y + 1 < gridSize->y && this->cellPos.x + 1 < gridSize->x) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) + 1 + (gridSize->y + 1));
+			return cells->at(this->cellPos.x + 1).at(this->cellPos.y + 1);
 		} if (direction == DOWNLEFT && this->cellPos.y + 1 < gridSize->y && this->cellPos.x != 0) {
-			return cells->at((this->cellPos.x + (this->cellPos.y * (gridSize->y + 1))) - 1 + (gridSize->y + 1));
+			return cells->at(this->cellPos.x - 1).at(this->cellPos.y + 1);
 		}
 		return nullptr;
 	}
@@ -170,7 +170,7 @@ struct liquid : Particle {
 };
 
 struct gas : Particle {
-	gas(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<Particle*>* cells) :
+	gas(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize, std::vector<std::vector<Particle*>>* cells) :
 		Particle(window, cellSize, gridSize, cells) {
 	}
 
