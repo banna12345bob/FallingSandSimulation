@@ -1,3 +1,3 @@
-# Sandstone
-Sandstone is a very simple game engine I'm working. It is used for text based adventure games but I may extend it's funcionality later on.
-I'm currently in the middle of porting the codebase from python to C++.
+# Falling Sand
+Kind of buggy and broken at the moment but I think it's pretty fun to play around with.
+Build solutions by running the batch file inside of the GenProjs folder.
