@@ -6,7 +6,7 @@
 #include <backends/imgui_impl_sdlrenderer2.h>
 
 namespace Sandstone {
-	SDLApplication::SDLApplication(const char* windowName, const int width, const int height)
+	SDLApplication::SDLApplication(const char* windowName, int width, int height, bool fullscreen)
 	{		
 		//Initialize SDL
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -14,7 +14,18 @@ namespace Sandstone {
 			SS_CORE_FATAL("SDL could not initialize! SDL_Error: %s", SDL_GetError());
 			SS_CORE_ASSERT(false, "SDL ERROR");
 		}else {
+			if (fullscreen) {
+				SDL_DisplayMode DM;
+				SDL_GetCurrentDisplayMode(0, &DM);
+				width = DM.w;
+				height = DM.h;
+			}
+
 			SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_SHOWN, &window, &renderer);
+
+			if (fullscreen)
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+
 			if (window == NULL || renderer == NULL)
 			{
 				SS_CORE_FATAL("Window or renderer could not be created! SDL_Error: %s", SDL_GetError());

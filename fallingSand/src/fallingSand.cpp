@@ -27,8 +27,8 @@ public:
 		OIL
 	};
 
-	fallingSand(const char* windowName, const int width, const int height)
-		: Sandstone::SDLApplication(windowName, width, height)
+	fallingSand(const char* windowName, const int width, const int height, const bool fullscreen)
+		: Sandstone::SDLApplication(windowName, width, height, fullscreen)
 	{
 		SDL_GetWindowSize(window, &windowW, &windowH);
 
@@ -228,5 +228,5 @@ private:
 
 Sandstone::Application* Sandstone::CreateApplication()
 {
-	return new fallingSand("Falling Sand", 540, 540);
+	return new fallingSand("Falling Sand", 540, 540, false);
 }
