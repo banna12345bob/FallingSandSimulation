@@ -1,10 +1,10 @@
 #include <sandstone.h>
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include <imgui.h>
-#include <backends/imgui_impl_sdl2.h>
-#include <backends/imgui_impl_sdlrenderer2.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlrenderer3.h>
 
 class fallingSand : public Sandstone::SDLApplication
 {
@@ -23,9 +23,9 @@ public:
 		SDL_Event e;
 		
 		if (SDL_PollEvent(&e)) {
-			ImGui_ImplSDL2_ProcessEvent(&e);
+			ImGui_ImplSDL3_ProcessEvent(&e);
 			switch (e.type) {
-			case SDL_QUIT:
+			case SDL_EVENT_QUIT:
 				this->running = false;
 				break;
 			}

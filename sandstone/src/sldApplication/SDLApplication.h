@@ -5,7 +5,7 @@
 #include <sstream>
 #include <map>
 #include "Application.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 namespace Sandstone {
 

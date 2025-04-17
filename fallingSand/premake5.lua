@@ -16,7 +16,7 @@ project "fallingSand"
 	includedirs
 	{
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.SDL2}",
+		"%{IncludeDir.SDL3}",
 		"%{IncludeDir.ImGui}",
 		"%{wks.location}/sandstone/src",
 		"%{wks.location}/sandstone/vendor",
@@ -29,7 +29,7 @@ project "fallingSand"
 	}
 
 	postbuildcommands {
-		"{COPY} %{IncludeDir.SDL2}/../lib/x64/SDL2.dll %{cfg.targetdir}"
+		"{COPY} %{IncludeDir.SDL3}/../lib/x64/SDL3.dll %{cfg.targetdir}"
 	}
 	
 	filter "system:windows"

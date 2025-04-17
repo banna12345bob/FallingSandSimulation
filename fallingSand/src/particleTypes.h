@@ -14,7 +14,7 @@ enum directions
 	DOWNRIGHT
 };
 
-struct Cell : SDL_Rect
+struct Cell : SDL_FRect
 {
 	Sandstone::Vector2d cellPos = Sandstone::Vector2d(0, 0);
 
@@ -25,7 +25,7 @@ struct Cell : SDL_Rect
 	Sandstone::Vector2d* cellSize;
 	Sandstone::Vector2d* gridSize;
 
-	SDL_Colour colour = { 0, 0, 0, 255 };
+	SDL_Color colour = { 0, 0, 0, 255 };
 
 	Cell(SDL_Window* window, Sandstone::Vector2d* cellSize, Sandstone::Vector2d* gridSize) {
 		this->window = window;

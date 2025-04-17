@@ -8,8 +8,6 @@ extern Sandstone::Application* Sandstone::CreateApplication();
 	{
 		Sandstone::Log::Init();
 
-		SS_CORE_INFO("Sandstone Initialised");
-
 		auto app = Sandstone::CreateApplication();
 		app->Run();
 		delete app;

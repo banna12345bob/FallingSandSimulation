@@ -1,10 +1,10 @@
 #include <sandstone.h>
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include <imgui.h>
-#include <backends/imgui_impl_sdl2.h>
-#include <backends/imgui_impl_sdlrenderer2.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlrenderer3.h>
 
 #include "fallingSandGUI.h"
 
@@ -53,19 +53,19 @@ public:
 		SS_INFO("fps: {0}", 1000 / deltaTime);
 
 		if (SDL_PollEvent(&e)) {
-			ImGui_ImplSDL2_ProcessEvent(&e);
+			ImGui_ImplSDL3_ProcessEvent(&e);
 			switch (e.type) {
-			case SDL_QUIT:
+			case SDL_EVENT_QUIT:
 				this->running = false;
 				break;
-			case SDL_MOUSEBUTTONDOWN:
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
 				mouseDown = true;
 				break;
-			case SDL_MOUSEBUTTONUP:
+			case SDL_EVENT_MOUSE_BUTTON_UP:
 				mouseDown = false;
 				break;
-			case SDL_KEYDOWN:
-				switch (e.key.keysym.scancode)
+			case SDL_EVENT_KEY_DOWN:
+				switch (e.key.scancode)
 				{
 				case SDL_SCANCODE_S:
 					placing = SAND;
@@ -96,8 +96,8 @@ public:
 			}
 		}
 
-		ImGui_ImplSDLRenderer2_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
+		ImGui_ImplSDLRenderer3_NewFrame();
+		ImGui_ImplSDL3_NewFrame();
 		ImGui::NewFrame();
 
 		if (mouseDown) {
@@ -170,7 +170,7 @@ public:
 		SDL_RenderFillRect(this->renderer, mouseRect);
 
 		ImGui::Render();
-		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), this->renderer);
+		ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), this->renderer);
 
 		SDL_RenderPresent(this->renderer);
 
@@ -220,7 +220,7 @@ private:
 
 
 	SDL_Event e;
-	SDL_Rect* mouseRect = new SDL_Rect();
+	SDL_FRect* mouseRect = new SDL_FRect();
 	double frameIndex = 0;
 
 	Particle* cell;

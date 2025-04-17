@@ -17,20 +17,19 @@ project "sandstone"
 	{
 		"src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.SDL2}",
+		"%{IncludeDir.SDL3}",
 		"%{IncludeDir.ImGui}"
 	}
 
 	links 
 	{
-		"SDL2",
-		"SDL2main",
+		"SDL3",
 		"ImGui"
 	}
 
 	libdirs
 	{
-		"%{IncludeDir.SDL2}/../lib/x64/"
+		"%{IncludeDir.SDL3}/../lib/x64/"
 	}
 
 	filter "system:windows"
