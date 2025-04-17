@@ -1,5 +1,5 @@
 workspace "fallingSand"
-	startproject "fallingSand"
+	startproject "conwaysGame"
 
 	configurations
 	{
@@ -23,3 +23,4 @@ group "Dependencies"
 group ""
 	include "sandstone"
 	include "fallingSand"
+	include "conwaysGame"

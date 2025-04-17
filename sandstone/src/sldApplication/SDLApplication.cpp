@@ -52,7 +52,9 @@ namespace Sandstone {
 
 	void SDLApplication::Run()
 	{
-		
+		while (this->running) {
+			this->RunApp();
+		}
 	}
 
 }
